@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formato de Inventario y Evidencias</title>
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('evidencias_theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = saved === 'dark' || saved === 'light' ? saved : (prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="google-accent-bar" aria-hidden="true"></div>
+
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <span class="dot dot-blue"></span>
+          <span class="dot dot-red"></span>
+          <span class="dot dot-yellow"></span>
+          <span class="dot dot-green"></span>
+        </div>
+        <div class="brand-text">
+          <h1>Formato de Inventario y Evidencias</h1>
+          <p id="headerSubtitle" class="subtitle">Mantenimiento Preventivo · Versión 3 · Generador de PDF</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button
+          id="inventoryToggle"
+          type="button"
+          class="toggle-chip is-active"
+          role="switch"
+          aria-checked="true"
+          title="Activar o desactivar el Formato de Inventario"
+        >
+          <span class="switch-track" aria-hidden="true">
+            <span class="switch-thumb"></span>
+          </span>
+          <span class="toggle-chip-label">Formato de inventario</span>
+        </button>
+
+        <div id="progressPill" class="progress-pill" aria-live="polite">
+          <span class="progress-dot" aria-hidden="true"></span>
+          <span id="progressText">0 / 12 evidencias</span>
+        </div>
+
+        <button
+          id="themeToggle"
+          type="button"
+          class="icon-button"
+          aria-label="Cambiar modo oscuro"
+          title="Cambiar entre modo claro y oscuro"
+        >
+          <svg id="iconSun" class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2"></path>
+            <path d="M12 20v2"></path>
+            <path d="m4.93 4.93 1.41 1.41"></path>
+            <path d="m17.66 17.66 1.41 1.41"></path>
+            <path d="M2 12h2"></path>
+            <path d="M20 12h2"></path>
+            <path d="m6.34 17.66-1.41 1.41"></path>
+            <path d="m19.07 4.93-1.41 1.41"></path>
+          </svg>
+          <svg id="iconMoon" class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+          </svg>
+          <span id="themeLabel" class="theme-label">Oscuro</span>
+        </button>
+      </div>
+    </div>
+    <div class="progress-track" aria-hidden="true">
+      <div id="progressBarFill" class="progress-fill"></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- 1. Datos generales del formato de inventario -->
+    <section class="card" data-inventory-section aria-labelledby="generalHeading">
+      <div class="card-header-row">
+        <div>
+          <h2 id="generalHeading" class="section-title">Formato de Inventario · Datos Generales</h2>
+          <p class="section-hint">Información de cabecera del formato</p>
+        </div>
+        <span class="version-chip">Versión 3</span>
+      </div>
+
+      <div class="form-grid grid-2">
+        <label class="field">
+          <span>Empresa</span>
+          <input id="inputEmpresa" type="text" placeholder="Nombre de la empresa" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>No. Ticket</span>
+          <input id="inputTicket" type="text" placeholder="Ej. INC-001234" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>Nombre Usuario</span>
+          <input id="inputUsuario" type="text" placeholder="Nombre completo del usuario" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>Fecha</span>
+          <input id="inputFecha" type="date">
+        </label>
+      </div>
+    </section>
+
+    <!-- 2. Descripción del equipo -->
+    <section class="card" data-inventory-section aria-labelledby="equipoHeading">
+      <div class="card-header-row">
+        <div>
+          <h2 id="equipoHeading" class="section-title">Descripción del Equipo</h2>
+          <p class="section-hint">Especificaciones de hardware y periféricos</p>
+        </div>
+
+        <div class="status-segmented" role="group" aria-label="Tipo de equipo">
+          <span class="segmented-label">Tipo:</span>
+          <div class="segmented-control">
+            <button type="button" class="seg-btn" data-equipo-tipo="Portátil" aria-pressed="false">
+              Portátil
+            </button>
+            <button type="button" class="seg-btn active-blue" data-equipo-tipo="PC" aria-pressed="true">
+              PC
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-grid grid-3">
+        <label class="field">
+          <span>S/N (Serial Equipo)</span>
+          <input id="inputSn" type="text" placeholder="Ej. 5CD1234XYZ" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>Marca</span>
+          <input id="inputMarca" type="text" placeholder="Ej. HP / Dell / Lenovo" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>Modelo</span>
+          <input id="inputModelo" type="text" placeholder="Ej. ProBook 440 G8" autocomplete="off">
+        </label>
+
+        <label class="field">
+          <span>Procesador</span>
+          <input id="inputProcesador" type="text" placeholder="Ej. Intel Core i5-1135G7" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>Memoria RAM</span>
+          <input id="inputRam" type="text" placeholder="Ej. 16 GB DDR4" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>Disco Duro</span>
+          <input id="inputDisco" type="text" placeholder="Ej. 512 GB SSD NVMe" autocomplete="off">
+        </label>
+
+        <label class="field">
+          <span>Unidad Óptica</span>
+          <input id="inputUnidadOptica" type="text" placeholder="Ej. N/A / DVD-RW" autocomplete="off">
+        </label>
+        <label class="field span-2-md">
+          <span>Sistema Operativo (S.O)</span>
+          <input id="inputSo" type="text" placeholder="Ej. Windows 11 Pro" autocomplete="off">
+        </label>
+      </div>
+
+      <div class="peripherals-divider"></div>
+
+      <div class="form-grid grid-2">
+        <label class="field">
+          <span>Monitor</span>
+          <input id="inputMonitor" type="text" placeholder="Marca / Modelo o N/A" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>Serial Monitor</span>
+          <input id="inputMonitorSerial" type="text" placeholder="Serial del monitor" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>Teclado</span>
+          <input id="inputTeclado" type="text" placeholder="Marca / Tipo o N/A" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>Serial Teclado</span>
+          <input id="inputTecladoSerial" type="text" placeholder="Serial del teclado" autocomplete="off">
+        </label>
+      </div>
+    </section>
+
+    <!-- 3. Checklist Mantenimiento Preventivo & Evidencias -->
+    <section class="evidence-section" aria-labelledby="checklistHeading">
+      <div class="card checklist-top-card" data-inventory-section>
+        <div class="card-header-row">
+          <div>
+            <h2 id="checklistHeading" class="section-title">Checklist Mantenimiento Preventivo</h2>
+            <p class="section-hint">Marca SI/NO en cada punto y monta las fotografías requeridas (<kbd>Ctrl</kbd>+<kbd>V</kbd> o arrastra)</p>
+          </div>
+
+          <div class="status-segmented" role="group" aria-label="Estado del equipo">
+            <span class="segmented-label">Estado del Equipo:</span>
+            <div class="segmented-control">
+              <button type="button" class="seg-btn active-green" data-equipment-state="Operable" aria-pressed="true">
+                Operable
+              </button>
+              <button type="button" class="seg-btn" data-equipment-state="No Operable" aria-pressed="false">
+                No Operable
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="antivirus-block">
+          <div class="antivirus-header">
+            <span class="antivirus-title">Antivirus</span>
+            <span class="antivirus-sub">Marcar SI / NO según corresponda</span>
+          </div>
+          <div class="antivirus-grid" id="antivirusList"></div>
+        </div>
+      </div>
+
+      <div class="section-header-row">
+        <div>
+          <h3 id="subsectionTitle" class="subsection-title">Ítems con Evidencia Fotográfica (FOTOS: SI / NO)</h3>
+        </div>
+        <button id="btnNextPending" type="button" class="text-button" hidden>
+          Ir al siguiente pendiente
+        </button>
+      </div>
+
+      <div id="evidenceList" class="evidence-list"></div>
+    </section>
+
+    <!-- 4. Observaciones y Firmas -->
+    <section class="card observations-card" data-inventory-section aria-labelledby="obsHeading">
+      <h2 id="obsHeading" class="section-title">Observaciones y Firmas</h2>
+
+      <label class="field obs-field">
+        <span>Observaciones</span>
+        <textarea
+          id="inputObservaciones"
+          rows="3"
+          placeholder="Notas adicionales del mantenimiento preventivo, hallazgos o recomendaciones..."
+        ></textarea>
+      </label>
+
+      <div class="signatures-grid">
+        <div class="signature-box">
+          <div class="signature-head">
+            <span>Firma Usuario (CLIENTE)</span>
+            <button type="button" class="text-button btn-clear-sig" data-clear-sig="cliente">Limpiar</button>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="sigCanvasCliente" class="sig-canvas" width="400" height="140" aria-label="Panel para dibujar firma del usuario cliente"></canvas>
+            <span id="sigHintCliente" class="sig-placeholder">Dibuja la firma aquí (opcional)</span>
+          </div>
+          <label class="field sig-name-field">
+            <span>Nombre del cliente</span>
+            <input id="inputFirmaClienteNombre" type="text" placeholder="Nombre legible para la firma" autocomplete="off">
+          </label>
+        </div>
+
+        <div class="signature-box">
+          <div class="signature-head">
+            <span>Firma Técnico (TELEFÓNICA)</span>
+            <button type="button" class="text-button btn-clear-sig" data-clear-sig="tecnico">Limpiar</button>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="sigCanvasTecnico" class="sig-canvas" width="400" height="140" aria-label="Panel para dibujar firma del técnico"></canvas>
+            <span id="sigHintTecnico" class="sig-placeholder">Dibuja la firma aquí (opcional)</span>
+          </div>
+          <label class="field sig-name-field">
+            <span>Nombre del técnico (opcional)</span>
+            <input id="inputFirmaTecnicoNombre" type="text" placeholder="Nombre del técnico que realiza" autocomplete="off">
+          </label>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Barra inferior fija -->
+  <footer class="action-bar">
+    <div class="action-bar-inner">
+      <div class="action-status">
+        <span id="footerStatusTitle" class="status-title">Faltan 12 evidencias por subir</span>
+        <span id="footerStatusHint" class="status-hint">Sube al menos 1 foto por cada ítem requerido para generar el PDF.</span>
+      </div>
+
+      <div class="action-buttons">
+        <button id="btnReset" type="button" class="btn btn-secondary">
+          Limpiar
+        </button>
+        <button id="btnPreviewPdf" type="button" class="btn btn-tonal" disabled>
+          Vista previa
+        </button>
+        <button id="btnGeneratePdf" type="button" class="btn btn-primary" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="12" y1="18" x2="12" y2="12"></line>
+            <polyline points="9 15 12 18 15 15"></polyline>
+          </svg>
+          <span>Generar PDF</span>
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Modal de vista previa del PDF -->
+  <div id="pdfModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
+    <div class="modal-backdrop" data-close-modal></div>
+    <div class="modal-panel">
+      <div class="modal-header">
+        <div>
+          <h3 id="modalTitle">Vista previa del PDF</h3>
+          <p id="modalSubtitle" class="modal-subtitle">Formato de Inventario + Evidencias</p>
+        </div>
+        <div class="modal-actions">
+          <button id="btnModalDownload" type="button" class="btn btn-primary">
+            Descargar PDF
+          </button>
+          <button id="btnModalClose" type="button" class="icon-button" aria-label="Cerrar vista previa" data-close-modal>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <iframe id="pdfPreviewFrame" title="Vista previa del documento PDF"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox simple para ampliar fotos subidas -->
+  <div id="imageModal" class="modal" role="dialog" aria-modal="true" aria-label="Ampliar fotografía" hidden>
+    <div class="modal-backdrop" data-close-image></div>
+    <div class="image-modal-panel">
+      <button type="button" class="icon-button image-modal-close" aria-label="Cerrar imagen" data-close-image>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <img id="lightboxImage" alt="Vista ampliada de evidencia">
+      <p id="lightboxCaption" class="lightbox-caption"></p>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <script src="pdf-generator.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
