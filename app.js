@@ -2,6 +2,7 @@
   'use strict';
 
   const THEME_STORAGE_KEY = 'evidencias_theme';
+  const TAB_STORAGE_KEY = 'evidencias_active_tab';
   const DB_NAME = 'evidencias_mantenimiento_db';
   const DB_VERSION = 1;
   const STORE_NAME = 'draft';
@@ -115,6 +116,8 @@
   let hoveredCardId = null;
   let lastPdfBlobUrl = null;
   let lastPdfFilename = null;
+  let modalCurrentBlobUrl = null;
+  let modalCurrentFilename = null;
   let saveTimer = null;
 
   const els = {
@@ -123,6 +126,10 @@
     inventoryToggle: document.getElementById('inventoryToggle'),
     headerSubtitle: document.getElementById('headerSubtitle'),
     subsectionTitle: document.getElementById('subsectionTitle'),
+    mainEvidencesView: document.getElementById('mainEvidencesView'),
+    pdfEditorView: document.getElementById('pdfEditorView'),
+    evidencesActionBar: document.getElementById('evidencesActionBar'),
+    tabButtons: Array.from(document.querySelectorAll('[data-app-tab]')),
     progressPill: document.getElementById('progressPill'),
     progressText: document.getElementById('progressText'),
     progressBarFill: document.getElementById('progressBarFill'),
@@ -176,7 +183,7 @@
       els.inventoryToggle.classList.toggle('is-active', enabled);
       els.inventoryToggle.setAttribute('aria-checked', String(enabled));
     }
-    if (els.headerSubtitle) {
+    if (els.headerSubtitle && !document.body.classList.contains('mode-editor')) {
       els.headerSubtitle.textContent = enabled
         ? 'Mantenimiento Preventivo · Versión 3 · Generador de PDF'
         : 'Solo Evidencias Fotográficas · Generador de PDF';
@@ -187,6 +194,45 @@
         : 'Evidencias Fotográficas Requeridas';
     }
   }
+
+  function applyActiveTab(tabName) {
+    const isEditor = tabName === 'editor';
+    document.body.classList.toggle('mode-editor', isEditor);
+    if (els.mainEvidencesView) els.mainEvidencesView.hidden = isEditor;
+    if (els.evidencesActionBar) els.evidencesActionBar.hidden = isEditor;
+    if (els.pdfEditorView) els.pdfEditorView.hidden = !isEditor;
+
+    els.tabButtons.forEach((btn) => {
+      const active = btn.getAttribute('data-app-tab') === (isEditor ? 'editor' : 'evidencias');
+      btn.classList.toggle('is-active', active);
+      btn.setAttribute('aria-selected', String(active));
+    });
+
+    if (els.headerSubtitle) {
+      if (isEditor) {
+        els.headerSubtitle.textContent = 'Editor de PDF · Cuadros de texto, marcas, firmas y anexos';
+      } else {
+        els.headerSubtitle.textContent =
+          state.includeInventario !== false
+            ? 'Mantenimiento Preventivo · Versión 3 · Generador de PDF'
+            : 'Solo Evidencias Fotográficas · Generador de PDF';
+      }
+    }
+
+    try {
+      localStorage.setItem(TAB_STORAGE_KEY, isEditor ? 'editor' : 'evidencias');
+    } catch (e) {}
+
+    if (isEditor && window.PdfEditorApi) {
+      window.PdfEditorApi.init();
+    }
+  }
+
+  els.tabButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      applyActiveTab(btn.getAttribute('data-app-tab'));
+    });
+  });
 
   if (els.inventoryToggle) {
     els.inventoryToggle.addEventListener('click', () => {
@@ -584,6 +630,10 @@
       els.footerStatusHint.textContent =
         'Sube al menos 1 foto por cada ítem requerido para habilitar el PDF.';
     }
+
+    if (window.PdfEditorApi && window.PdfEditorApi.syncEvidenceCount) {
+      window.PdfEditorApi.syncEvidenceCount();
+    }
   }
 
   function createSvgIcon(type) {
@@ -943,6 +993,8 @@
   }
 
   function openPdfModal(blobUrl, filename) {
+    modalCurrentBlobUrl = blobUrl;
+    modalCurrentFilename = filename;
     els.pdfPreviewFrame.src = blobUrl;
     els.modalSubtitle.textContent = filename;
     els.pdfModal.hidden = false;
@@ -1042,9 +1094,11 @@
   els.btnGeneratePdf.addEventListener('click', () => runPdfAction('download'));
   els.btnPreviewPdf.addEventListener('click', () => runPdfAction('preview'));
   els.btnModalDownload.addEventListener('click', () => {
-    if (lastPdfBlobUrl && lastPdfFilename) {
-      triggerDownload(lastPdfBlobUrl, lastPdfFilename);
-      showToast(`PDF descargado: ${lastPdfFilename}`);
+    const url = modalCurrentBlobUrl || lastPdfBlobUrl;
+    const name = modalCurrentFilename || lastPdfFilename;
+    if (url && name) {
+      triggerDownload(url, name);
+      showToast(`PDF descargado: ${name}`);
     }
   });
 
@@ -1089,6 +1143,7 @@
   });
 
   document.addEventListener('paste', (e) => {
+    if (document.body.classList.contains('mode-editor')) return;
     const activeEl = document.activeElement;
     if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) {
       const hasFiles = e.clipboardData && e.clipboardData.files && e.clipboardData.files.length > 0;
@@ -1166,7 +1221,36 @@
       renderAllEvidenceItems();
       updateSummaryUI();
     }
+
+    let initialTab = 'evidencias';
+    try {
+      const savedTab = localStorage.getItem(TAB_STORAGE_KEY);
+      if (savedTab === 'editor') initialTab = 'editor';
+    } catch (e) {}
+    applyActiveTab(initialTab);
   }
+
+  window.AppEvidencesApi = {
+    getStats,
+    showToast,
+    openPdfPreview: openPdfModal,
+    createBlankInventoryState: () => {
+      const blank = createInitialState();
+      blank.isBlankTemplate = true;
+      blank.meta.fecha = '';
+      blank.meta.tipoEquipo = '';
+      blank.meta.estadoEquipo = '';
+      return blank;
+    },
+    generateEvidencesOnlyPdfBlob: () => {
+      const itemsWithPhotos = state.items.filter((it) => it.photos.length > 0);
+      return window.PdfEvidenceGenerator.generateEvidencePdf({
+        ...state,
+        includeInventario: false,
+        items: itemsWithPhotos.length > 0 ? itemsWithPhotos : state.items
+      });
+    }
+  };
 
   init();
 })();

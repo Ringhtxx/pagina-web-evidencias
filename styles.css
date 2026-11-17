@@ -82,6 +82,10 @@
   box-sizing: border-box;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -1276,6 +1280,530 @@ textarea {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Pestañas de navegación principal (Google Material Tabs) */
+.app-tabs {
+  border-top: 1px solid var(--border-subtle);
+  background: var(--surface);
+}
+
+.app-tabs-inner {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.app-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color var(--transition), background-color var(--transition);
+  border-radius: 8px 8px 0 0;
+}
+
+.app-tab svg {
+  width: 16px;
+  height: 16px;
+}
+
+.app-tab:hover {
+  color: var(--text);
+  background: var(--surface-subtle);
+}
+
+.app-tab.is-active {
+  color: var(--google-blue);
+  font-weight: 600;
+}
+
+.app-tab.is-active::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 0;
+  height: 2.5px;
+  border-radius: 3px 3px 0 0;
+  background: var(--google-blue);
+}
+
+body.mode-editor #inventoryToggle,
+body.mode-editor #progressPill,
+body.mode-editor .progress-track {
+  display: none;
+}
+
+/* ==================== Editor de PDF ==================== */
+.editor-view[hidden] {
+  display: none;
+}
+
+.editor-empty-wrap {
+  max-width: 680px;
+  margin: 42px auto;
+  padding: 0 20px;
+}
+
+.editor-dropzone {
+  text-align: center;
+  padding: 40px 28px;
+  border: 1.5px dashed var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  transition: border-color var(--transition), background-color var(--transition);
+}
+
+.editor-dropzone.is-dragover {
+  border-color: var(--google-blue);
+  background: var(--google-blue-soft);
+}
+
+.editor-drop-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: var(--google-blue-soft);
+  color: var(--google-blue);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.editor-drop-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.editor-dropzone h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.editor-dropzone p {
+  margin: 0;
+  max-width: 520px;
+  font-size: 0.87rem;
+  color: var(--text-secondary);
+}
+
+.editor-empty-actions {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.editor-empty-hint {
+  margin-top: 4px;
+  font-size: 0.77rem;
+  color: var(--text-secondary);
+}
+
+/* Barra de herramientas del Editor de PDF */
+.editor-toolbar-wrap {
+  position: sticky;
+  top: 107px;
+  z-index: 40;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.editor-toolbar {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 8px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.ed-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ed-group[hidden] {
+  display: none;
+}
+
+.ed-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border);
+  margin: 0 2px;
+}
+
+.ed-spacer {
+  flex: 1;
+  min-width: 8px;
+}
+
+.ed-tool-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 32px;
+  padding: 0 9px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.ed-tool-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+.ed-tool-btn:hover {
+  background: var(--surface-subtle);
+  color: var(--text);
+}
+
+.ed-tool-btn.is-active {
+  background: var(--google-blue-soft);
+  color: var(--google-blue);
+  border-color: var(--google-blue-border);
+  font-weight: 600;
+}
+
+.ed-mini-btn {
+  min-width: 30px;
+  height: 30px;
+  padding: 0 8px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+}
+
+.ed-mini-btn:hover:not(:disabled) {
+  background: var(--surface-subtle);
+}
+
+.ed-mini-btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.ed-mini-btn.is-active {
+  background: var(--google-blue-soft);
+  color: var(--google-blue);
+  border-color: var(--google-blue-border);
+}
+
+.ed-bold-btn {
+  font-weight: 800;
+}
+
+.ed-val {
+  min-width: 44px;
+  text-align: center;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.ed-mini-pill {
+  height: 30px;
+  padding: 0 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.77rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.ed-mini-pill:hover {
+  background: var(--surface-subtle);
+  color: var(--text);
+}
+
+.ed-mini-pill.is-active {
+  background: var(--google-blue-soft);
+  color: var(--google-blue);
+  border-color: var(--google-blue-border);
+  font-weight: 600;
+}
+
+.ed-mini-pill.ed-danger:hover {
+  background: var(--google-red-soft);
+  color: var(--google-red);
+  border-color: var(--google-red);
+}
+
+.ed-colors {
+  gap: 6px;
+  padding: 0 4px;
+}
+
+.ed-swatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--surface);
+  box-shadow: 0 0 0 1px var(--border);
+  background: var(--sw);
+  cursor: pointer;
+  padding: 0;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.ed-swatch:hover {
+  transform: scale(1.12);
+}
+
+.ed-swatch.is-active {
+  box-shadow: 0 0 0 2px var(--google-blue);
+  transform: scale(1.1);
+}
+
+/* Área de páginas renderizadas del PDF */
+.pdf-pages-container {
+  padding: 24px 20px 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  overflow-x: auto;
+}
+
+.pdf-page-sheet {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.pdf-page-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.pdf-page-stage {
+  position: relative;
+  background: #ffffff;
+  border-radius: 4px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  user-select: none;
+}
+
+.pdf-page-canvas {
+  display: block;
+}
+
+.pdf-page-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+.pdf-draw-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.pdf-pages-container[data-active-tool="text"] .pdf-page-overlay { cursor: text; }
+.pdf-pages-container[data-active-tool="mark"] .pdf-page-overlay,
+.pdf-pages-container[data-active-tool="draw"] .pdf-page-overlay,
+.pdf-pages-container[data-active-tool="rect"] .pdf-page-overlay { cursor: crosshair; }
+
+/* Elementos / Anotaciones sobre el PDF */
+.pdf-annot {
+  position: absolute;
+  box-sizing: border-box;
+  cursor: move;
+  border: 1px solid transparent;
+  border-radius: 2px;
+}
+
+.pdf-annot:hover {
+  border-color: rgba(26, 115, 232, 0.55);
+}
+
+.pdf-annot.is-selected {
+  border: 1.5px solid #1a73e8;
+  box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.16);
+  z-index: 6;
+}
+
+.pdf-annot-text {
+  padding: 2px 4px;
+  font-family: Helvetica, Arial, sans-serif;
+  line-height: 1.25;
+}
+
+.pdf-text-display {
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.25;
+  pointer-events: none;
+}
+
+.pdf-text-editor {
+  width: 100%;
+  min-height: 1.25em;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  font-family: Helvetica, Arial, sans-serif;
+  line-height: 1.25;
+  resize: none;
+  overflow: hidden;
+  display: block;
+  cursor: text;
+}
+
+.pdf-annot-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pdf-mark-x {
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.pdf-annot-rect {
+  border: 1px dashed rgba(95, 99, 104, 0.35);
+}
+
+.pdf-rect-draft {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1.5px dashed #1a73e8;
+  pointer-events: none;
+}
+
+.pdf-annot-image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.annot-del-btn {
+  position: absolute;
+  top: -11px;
+  right: -11px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  background: #d93025;
+  color: #ffffff;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  z-index: 8;
+}
+
+.annot-handle {
+  position: absolute;
+  background: #ffffff;
+  border: 2px solid #1a73e8;
+  border-radius: 50%;
+  z-index: 8;
+}
+
+.handle-e {
+  top: 50%;
+  right: -6px;
+  width: 11px;
+  height: 11px;
+  transform: translateY(-50%);
+  cursor: ew-resize;
+}
+
+.handle-se {
+  right: -6px;
+  bottom: -6px;
+  width: 12px;
+  height: 12px;
+  cursor: nwse-resize;
+}
+
+/* Barra inferior del Editor */
+.editor-action-inner {
+  max-width: 1180px;
+}
+
+.attach-evidences-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 3px;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.attach-evidences-check input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--google-blue);
+  cursor: pointer;
+}
+
+.attach-evidences-check input:disabled + span {
+  opacity: 0.6;
+}
+
 /* Responsive */
 @media (max-width: 720px) {
   .header-inner {
@@ -1322,6 +1850,14 @@ textarea {
   }
 
   .theme-label {
+    display: none;
+  }
+
+  .editor-toolbar-wrap {
+    position: static;
+  }
+
+  .ed-tool-btn span {
     display: none;
   }
 

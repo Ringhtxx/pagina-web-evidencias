@@ -79,12 +79,35 @@
         </button>
       </div>
     </div>
+
+    <nav class="app-tabs" role="tablist" aria-label="Secciones de la aplicación">
+      <div class="app-tabs-inner">
+        <button type="button" class="app-tab is-active" role="tab" aria-selected="true" data-app-tab="evidencias">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+            <polyline points="21 15 16 10 5 21"></polyline>
+          </svg>
+          <span>Evidencias e Inventario</span>
+        </button>
+        <button type="button" class="app-tab" role="tab" aria-selected="false" data-app-tab="editor">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <path d="M10 13h4"></path>
+            <path d="M12 11v6"></path>
+          </svg>
+          <span>Editor de PDF</span>
+        </button>
+      </div>
+    </nav>
+
     <div class="progress-track" aria-hidden="true">
       <div id="progressBarFill" class="progress-fill"></div>
     </div>
   </header>
 
-  <main class="container">
+  <main id="mainEvidencesView" class="container">
     <!-- 1. Datos generales del formato de inventario -->
     <section class="card" data-inventory-section aria-labelledby="generalHeading">
       <div class="card-header-row">
@@ -285,8 +308,8 @@
     </section>
   </main>
 
-  <!-- Barra inferior fija -->
-  <footer class="action-bar">
+  <!-- Barra inferior fija (Evidencias) -->
+  <footer id="evidencesActionBar" class="action-bar">
     <div class="action-bar-inner">
       <div class="action-status">
         <span id="footerStatusTitle" class="status-title">Faltan 12 evidencias por subir</span>
@@ -312,6 +335,164 @@
       </div>
     </div>
   </footer>
+
+  <!-- Vista 2: Editor de PDF en bruto -->
+  <section id="pdfEditorView" class="editor-view" aria-label="Editor de PDF" hidden>
+    <input id="pdfFileInput" type="file" accept="application/pdf,.pdf" hidden>
+    <input id="editorImageInput" type="file" accept="image/*" hidden>
+
+    <!-- Estado inicial sin PDF cargado -->
+    <div id="pdfEditorEmpty" class="editor-empty-wrap">
+      <div id="pdfDropzone" class="card editor-dropzone">
+        <div class="editor-drop-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="12" y1="18" x2="12" y2="12"></line>
+            <polyline points="9 15 12 12 15 15"></polyline>
+          </svg>
+        </div>
+        <h2>Editor de PDF en bruto</h2>
+        <p>
+          Sube el <strong>Reporte de Asistencia</strong>, el <strong>Formato de Inventario</strong> o cualquier acta en PDF para insertar cuadros de texto, marcar casillas, firmar a mano alzada y exportar el PDF listo.
+        </p>
+        <div class="editor-empty-actions">
+          <button id="btnPickPdf" type="button" class="btn btn-primary">
+            Seleccionar PDF
+          </button>
+          <button id="btnLoadTemplate" type="button" class="btn btn-tonal">
+            Usar plantilla integrada (Reporte + Inventario)
+          </button>
+        </div>
+        <span class="editor-empty-hint">También puedes arrastrar y soltar el archivo .pdf aquí · Se guarda localmente en tu navegador</span>
+      </div>
+    </div>
+
+    <!-- Espacio de trabajo del editor -->
+    <div id="pdfEditorWorkspace" class="editor-workspace" hidden>
+      <div class="editor-toolbar-wrap">
+        <div class="editor-toolbar">
+          <!-- Herramientas principales -->
+          <div class="ed-group" role="group" aria-label="Herramientas de edición">
+            <button type="button" class="ed-tool-btn is-active" data-ed-tool="select" aria-pressed="true" title="Seleccionar y mover (V)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 3 7.07 16.97 2.51-7.39 7.39-2.51L3 3z"></path></svg>
+              <span>Mover</span>
+            </button>
+            <button type="button" class="ed-tool-btn" data-ed-tool="text" aria-pressed="false" title="Insertar cuadro de texto (T)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg>
+              <span>Texto</span>
+            </button>
+            <button type="button" class="ed-tool-btn" data-ed-tool="mark" aria-pressed="false" title="Marcar casilla X o ✓ (X)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>Marca</span>
+            </button>
+            <button type="button" class="ed-tool-btn" data-ed-tool="draw" aria-pressed="false" title="Firma o dibujo libre (D)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path></svg>
+              <span>Firma</span>
+            </button>
+            <button type="button" class="ed-tool-btn" data-ed-tool="rect" aria-pressed="false" title="Borrador blanco para cubrir texto (R)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect></svg>
+              <span>Cubrir</span>
+            </button>
+            <button type="button" class="ed-tool-btn" data-ed-tool="image" aria-pressed="false" title="Insertar imagen o sello">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+              <span>Imagen</span>
+            </button>
+          </div>
+
+          <div class="ed-divider"></div>
+
+          <!-- Propiedades contextuales -->
+          <div id="edGrpFont" class="ed-group" hidden>
+            <button id="btnEdFontMinus" type="button" class="ed-mini-btn" title="Reducir tamaño">−</button>
+            <span id="edFontSizeVal" class="ed-val">10 pt</span>
+            <button id="btnEdFontPlus" type="button" class="ed-mini-btn" title="Aumentar tamaño">+</button>
+            <button id="btnEdBold" type="button" class="ed-mini-btn ed-bold-btn" aria-pressed="false" title="Negrita">B</button>
+          </div>
+
+          <div id="edGrpBg" class="ed-group" hidden>
+            <button id="btnEdBgWhite" type="button" class="ed-mini-pill" aria-pressed="false" title="Activar fondo blanco sólido detrás del texto">
+              Fondo blanco
+            </button>
+          </div>
+
+          <div id="edGrpMark" class="ed-group" hidden>
+            <button type="button" class="ed-mini-btn is-active" data-ed-mark="X" title="Marca X">X</button>
+            <button type="button" class="ed-mini-btn" data-ed-mark="check" title="Marca ✓">✓</button>
+          </div>
+
+          <div id="edGrpStroke" class="ed-group" hidden>
+            <button type="button" class="ed-mini-btn" data-ed-stroke="1.5" title="Trazo fino">Fino</button>
+            <button type="button" class="ed-mini-btn is-active" data-ed-stroke="2" title="Trazo medio">Medio</button>
+            <button type="button" class="ed-mini-btn" data-ed-stroke="3.5" title="Trazo grueso">Grueso</button>
+          </div>
+
+          <div id="edGrpColors" class="ed-group ed-colors" hidden>
+            <button type="button" class="ed-swatch is-active" data-ed-color="#111827" style="--sw:#111827" title="Negro"></button>
+            <button type="button" class="ed-swatch" data-ed-color="#1a73e8" style="--sw:#1a73e8" title="Azul Google"></button>
+            <button type="button" class="ed-swatch" data-ed-color="#d93025" style="--sw:#d93025" title="Rojo"></button>
+            <button type="button" class="ed-swatch" data-ed-color="#1e8e3e" style="--sw:#1e8e3e" title="Verde"></button>
+            <button type="button" class="ed-swatch" data-ed-color="#5f6368" style="--sw:#5f6368" title="Gris"></button>
+          </div>
+
+          <div id="edGrpSelection" class="ed-group" hidden>
+            <button id="btnEdDuplicate" type="button" class="ed-mini-pill" title="Duplicar elemento (Ctrl+D)">Duplicar</button>
+            <button id="btnEdDelete" type="button" class="ed-mini-pill ed-danger" title="Eliminar elemento (Supr)">Eliminar</button>
+          </div>
+
+          <div class="ed-spacer"></div>
+
+          <!-- Historial, Zoom y Documento -->
+          <div class="ed-group">
+            <button id="btnEdUndo" type="button" class="ed-mini-btn" title="Deshacer (Ctrl+Z)" disabled>↶</button>
+            <button id="btnEdRedo" type="button" class="ed-mini-btn" title="Rehacer (Ctrl+Y)" disabled>↷</button>
+          </div>
+
+          <div class="ed-group">
+            <button id="btnEdZoomOut" type="button" class="ed-mini-btn" title="Alejar">−</button>
+            <span id="edZoomVal" class="ed-val">115%</span>
+            <button id="btnEdZoomIn" type="button" class="ed-mini-btn" title="Acercar">+</button>
+          </div>
+
+          <div class="ed-group">
+            <button id="btnChangePdf" type="button" class="ed-mini-pill" title="Cargar otro PDF">Cambiar PDF</button>
+            <button id="btnClearAnnotations" type="button" class="ed-mini-pill" title="Borrar solo los textos/marcas agregados">Limpiar textos</button>
+            <button id="btnClosePdf" type="button" class="ed-mini-btn" title="Cerrar documento">×</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="pdfPagesContainer" class="pdf-pages-container" data-active-tool="select"></div>
+    </div>
+
+    <!-- Barra inferior fija del Editor -->
+    <footer id="editorActionBar" class="action-bar" hidden>
+      <div class="action-bar-inner editor-action-inner">
+        <div class="action-status">
+          <span id="editorFileMeta" class="status-title">documento.pdf</span>
+          <label class="attach-evidences-check">
+            <input id="chkAttachEvidences" type="checkbox" disabled>
+            <span id="attachEvidencesLabel">Anexar evidencias fotográficas (sin fotos cargadas)</span>
+          </label>
+        </div>
+
+        <div class="action-buttons">
+          <button id="btnPreviewEditorPdf" type="button" class="btn btn-tonal" disabled>
+            Vista previa
+          </button>
+          <button id="btnExportEditorPdf" type="button" class="btn btn-primary" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="12" y1="18" x2="12" y2="12"></line>
+              <polyline points="9 15 12 18 15 15"></polyline>
+            </svg>
+            <span>Exportar PDF</span>
+          </button>
+        </div>
+      </div>
+    </footer>
+  </section>
 
   <!-- Modal de vista previa del PDF -->
   <div id="pdfModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
@@ -357,7 +538,11 @@
 
   <div id="toastContainer" class="toast-container" aria-live="polite"></div>
 
+  <script src="vendor/pdf.min.js"></script>
+  <script src="vendor/pdf.worker.min.js"></script>
+  <script src="vendor/pdf-lib.min.js"></script>
   <script src="pdf-generator.js"></script>
+  <script src="pdf-editor.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

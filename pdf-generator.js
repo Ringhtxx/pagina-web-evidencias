@@ -530,7 +530,7 @@
 
     // Fila Tipo: PORTATIL [ ] PC [ ] S/N:
     const isPortatil = m.tipoEquipo === 'Portátil';
-    const isPc = m.tipoEquipo !== 'Portátil';
+    const isPc = m.tipoEquipo === 'PC';
     p1.text('Tipo:', MARGIN_X + 6, y + 5, { size: 7.8, bold: true, color: C_INK });
     p1.text('PORTATIL', MARGIN_X + 74, y + 5, { size: 7.8, color: C_INK });
     drawCheckMarkBox(p1, MARGIN_X + 124, y + 3.5, 10, isPortatil, C_BLUE);
@@ -595,8 +595,14 @@
         const lines = wrapText(item.title, 7.5, 224, true);
         const height = Math.max(14, lines.length * 9.2 + 4.8);
         const hasPhotos = item.photos.length > 0;
-        const fotoStatus = !item.requiresPhoto && !hasPhotos ? 'NO' : (hasPhotos ? 'SI' : 'NO');
-        const checkStatus = item.checkStatus || (hasPhotos ? 'SI' : null);
+        const fotoStatus = state.isBlankTemplate
+          ? null
+          : !item.requiresPhoto && !hasPhotos
+            ? 'NO'
+            : hasPhotos
+              ? 'SI'
+              : 'NO';
+        const checkStatus = state.isBlankTemplate ? null : item.checkStatus || (hasPhotos ? 'SI' : null);
         return {
           prefix: '',
           label: item.title,
@@ -631,12 +637,13 @@
     p1.line(estadoBoxX, estY + 15, estadoBoxX + estadoBoxW, estY + 15, C_BORDER, 0.7);
     p1.text('Estado del Equipo', estadoBoxX + 6, estY + 4, { size: 8.0, bold: true, color: C_INK });
 
-    const isOperable = m.estadoEquipo !== 'No Operable';
+    const isOperable = m.estadoEquipo === 'Operable';
+    const isNoOperable = m.estadoEquipo === 'No Operable';
     p1.text('Operable', estadoBoxX + 6, estY + 23, { size: 7.8, color: C_INK });
     drawCheckMarkBox(p1, estadoBoxX + estadoBoxW - 22, estY + 21, 11, isOperable, C_GREEN);
 
     p1.text('No Operable', estadoBoxX + 6, estY + 43, { size: 7.8, color: C_INK });
-    drawCheckMarkBox(p1, estadoBoxX + estadoBoxW - 22, estY + 41, 11, !isOperable, C_RED);
+    drawCheckMarkBox(p1, estadoBoxX + estadoBoxW - 22, estY + 41, 11, isNoOperable, C_RED);
 
     ry += headerRowH;
 
@@ -791,6 +798,10 @@
       const p1 = new PageCanvas();
       pages.push(p1);
       drawFormatPageOne(p1, state);
+    }
+
+    if (state.isBlankTemplate) {
+      return assemblePdf(pages, encodedImages);
     }
 
     // 3. Páginas siguientes: Evidencias Fotográficas Adjuntas
